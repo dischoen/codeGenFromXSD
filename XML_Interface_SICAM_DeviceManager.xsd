@@ -1,0 +1,947 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mit XMLSpy v2014 rel. 2 sp1 (x64) (http://www.altova.com) von Juraj Madaj (Siemens AG Österreich) bearbeitet -->
+<!-- edited with XMLSpy v2016 (x64) (http://www.altova.com) by Wieninger Thomas (Siemens AG Österreich) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--=========================-->
+	<!--====== VERSION V1.1 ======-->
+	<!--=========================-->
+	<xs:element name="Interfaces">
+		<xs:annotation>
+			<xs:documentation>root elelement only for well formedness</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Cmd_LogOn"/>
+				<xs:element ref="Rsp_LogOn"/>
+				<xs:element ref="Cmd_LogOff"/>
+				<xs:element ref="Rsp_LogOff"/>
+				<xs:element ref="Cmd_GetAppInfo"/>
+				<xs:element ref="Rsp_GetAppInfo"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!--###### logon ######-->
+	<xs:element name="Cmd_LogOn">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="user">
+					<xs:complexType/>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_LogOn">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="session_id" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="errorType"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_LogOff" type="cmdTypeSessionId"/>
+	<xs:element name="Rsp_LogOff">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:sequence minOccurs="0">
+						<xs:element name="reason" type="errorType"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--###### app ######-->
+	<xs:element name="Cmd_GetAppInfo" type="cmdTypeSessionId"/>
+	<xs:element name="Rsp_GetAppInfo">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="last_project" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>reopen last project</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="name" type="xs:string"/>
+												<xs:element name="path">
+													<xs:annotation>
+														<xs:documentation>this is the entire path to project.xml
+
+e.g. C:\temp\DeviceManager
+
+Npte: In \DeviceManager is the project.xml</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="id" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="preset_language">
+										<xs:complexType>
+											<xs:attribute name="id" type="xs:string" use="required">
+												<xs:annotation>
+													<xs:documentation>Language in which the application is illustrated</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="possible_languages">
+										<xs:complexType>
+											<xs:sequence maxOccurs="unbounded">
+												<xs:element name="language">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="name" type="xs:string">
+																<xs:annotation>
+																	<xs:documentation>Name of the language:
+- German
+- English
+- Spain
+- etc.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+														<xs:attribute name="id" type="xs:string" use="required"/>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="recent_projects" minOccurs="0">
+										<xs:complexType>
+											<xs:sequence maxOccurs="unbounded">
+												<xs:element name="project">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="name" type="xs:string">
+																<xs:annotation>
+																	<xs:documentation>Name of the projects:
+- Project 1
+- Project 2
+- etc.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+														<xs:attribute name="id" type="xs:string" use="required"/>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--###### project ######-->
+	<xs:element name="Cmd_CreateProject">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionId">
+					<xs:sequence>
+						<xs:element name="project">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="name" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>special characters are replaced at the backend</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="path" type="xs:string"/>
+									<xs:element name="desc_header" type="xs:string"/>
+									<xs:element name="desc_body" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_CreateProject">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="project">
+										<xs:complexType>
+											<xs:attribute name="id" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_OpenProject">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionId">
+					<xs:sequence>
+						<xs:element name="project">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="path" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>this is the entire path to project.xml
+
+e.g. C:\temp\DeviceManager
+
+Npte: In \DeviceManager is the project.xml</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_OpenProject">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="project">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="name"/>
+											</xs:sequence>
+											<xs:attribute name="id" type="xs:string" use="required"/>
+											<xs:attribute name="read_only" type="xs:boolean" use="required">
+												<xs:annotation>
+													<xs:documentation>user is not able to:
+- edit project attributes
+- delete project
+- move folders and/or devices to root directory (below project directory)</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_CloseProject" type="cmdTypeSessionIdAndProject"/>
+	<xs:element name="Rsp_CloseProject">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:sequence minOccurs="0">
+						<xs:element name="reason" type="errorType"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_AllChangesCommited" type="cmdTypeSessionIdAndProject"/>
+	<xs:element name="Rsp_AllChangesCommited">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:sequence minOccurs="0">
+						<xs:element name="reason" type="errorType"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_CommitChanges" type="cmdTypeSessionIdAndProject"/>
+	<xs:element name="Rsp_CommitChanges">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:sequence minOccurs="0">
+						<xs:element name="reason" type="errorType"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--###### file query ######-->
+	<xs:element name="Cmd_GetProjectPathContent">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionId">
+					<xs:sequence>
+						<xs:element name="path" type="xs:string" minOccurs="0"/>
+						<xs:element name="direction">
+							<xs:annotation>
+								<xs:documentation>up
+down</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_GetProjectPathContent">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="element">
+										<xs:complexType>
+											<xs:sequence minOccurs="0" maxOccurs="unbounded">
+												<xs:element name="child_element">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="name" type="xs:string"/>
+															<xs:element name="dir_name" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>this is the parent directory from project.xml</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+														<xs:attribute name="container" type="xs:boolean" use="required"/>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="current_path" type="xs:string" use="required"/>
+											<xs:attribute name="has_parent" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_GetPathContent">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionId">
+					<xs:sequence>
+						<xs:element name="path" type="xs:string" minOccurs="0"/>
+						<xs:element name="direction">
+							<xs:annotation>
+								<xs:documentation>up
+down</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_GetPathContent">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="element">
+										<xs:complexType>
+											<xs:sequence minOccurs="0" maxOccurs="unbounded">
+												<xs:element name="child_element">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="name" type="xs:string"/>
+															<xs:element name="type" type="xs:string"/>
+														</xs:sequence>
+														<xs:attribute name="container" type="xs:boolean" use="required"/>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="current_path" type="xs:string" use="required"/>
+											<xs:attribute name="has_parent" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_GetDefaultProjectSettings" type="cmdTypeSessionId"/>
+	<xs:element name="Rsp_GetDefaultProjectSettings">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="project">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="name" type="xs:string"/>
+												<xs:element name="path" type="xs:string"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--###### project view ######-->
+	<xs:element name="Cmd_GetChildren">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence>
+						<xs:element name="folder" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Get all children which are below this container
+If not given, the default path is used (user directory) </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:attribute name="id" type="xs:string" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_GetChildren">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:choice maxOccurs="unbounded">
+									<xs:element name="device">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="name" type="xs:string"/>
+											</xs:sequence>
+											<xs:attribute name="id" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="folder">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="name" type="xs:string"/>
+											</xs:sequence>
+											<xs:attribute name="id" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:choice>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--###### project view (folder commands) ######-->
+	<xs:element name="Cmd_CreateFolder">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence>
+						<xs:element name="parent_folder" minOccurs="0">
+							<xs:complexType>
+								<xs:attribute name="id" use="required"/>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="folder">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="name"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_CreateFolder">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="folder">
+										<xs:complexType>
+											<xs:attribute name="id" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_RenameFolder">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence>
+						<xs:element name="folder">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="name" type="xs:string"/>
+								</xs:sequence>
+								<xs:attribute name="id" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_RenameFolder">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:sequence minOccurs="0">
+						<xs:element name="reason" type="errorType"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_DeleteFolder">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence>
+						<xs:element name="folder">
+							<xs:complexType>
+								<xs:attribute name="id" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_DeleteFolder">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:sequence minOccurs="0">
+						<xs:element name="reason" type="errorType"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--###### project view (device commands) ######-->
+	<xs:element name="Cmd_GetDeviceData">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="device">
+							<xs:complexType>
+								<xs:attribute name="id" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_GetDeviceData">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence maxOccurs="unbounded">
+									<xs:element name="device">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="name" type="xs:string"/>
+												<xs:element name="device_type" type="xs:string"/>
+												<xs:element name="ip_address" type="xs:string"/>
+												<xs:element name="region" type="xs:integer" minOccurs="0"/>
+												<xs:element name="component" type="xs:integer" minOccurs="0"/>
+												<xs:element name="description" type="xs:string" minOccurs="0"/>
+											</xs:sequence>
+											<xs:attribute name="id" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_CreateDevice">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence>
+						<xs:element name="parent_folder" minOccurs="0">
+							<xs:complexType>
+								<xs:attribute name="id" use="required"/>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="device">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="name" type="xs:string"/>
+									<xs:element name="device_type" type="xs:string"/>
+									<xs:element name="ip_address" type="xs:string"/>
+									<xs:element name="region" type="xs:integer" minOccurs="0"/>
+									<xs:element name="component" type="xs:integer" minOccurs="0"/>
+									<xs:element name="description" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_CreateDevice">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="device">
+										<xs:complexType>
+											<xs:attribute name="id" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_EditDevice">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence>
+						<xs:element name="device">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="name" type="xs:string"/>
+									<xs:element name="device_type" type="xs:string"/>
+									<xs:element name="ip_address" type="xs:string"/>
+									<xs:element name="region" type="xs:integer" minOccurs="0"/>
+									<xs:element name="component" type="xs:integer" minOccurs="0"/>
+									<xs:element name="description" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+								<xs:attribute name="id" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_EditDevice">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:sequence minOccurs="0">
+						<xs:element name="reason" type="errorType"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_DeleteDevice">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence>
+						<xs:element name="device">
+							<xs:complexType>
+								<xs:attribute name="id" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_DeleteDevice">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:sequence minOccurs="0">
+						<xs:element name="reason" type="errorType"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--###### Multiply device ######-->
+	<xs:element name="Cmd_GetDeviceStatus">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="device">
+							<xs:complexType>
+								<xs:attribute name="id" type="xs:string" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_GetDeviceStatus">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence maxOccurs="unbounded">
+									<xs:element name="device">
+										<xs:complexType>
+											<xs:attribute name="id" type="xs:string" use="required"/>
+											<xs:attribute name="status" use="required">
+												<xs:annotation>
+													<xs:documentation>0: read/write
+1: readonly</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason" type="errorType"/>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_ValidateDeviceProperties">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="device">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="name"/>
+									<xs:element name="ip_address"/>
+									<xs:element name="region" minOccurs="0"/>
+									<xs:element name="component" minOccurs="0"/>
+								</xs:sequence>
+								<xs:attribute name="id" type="xs:string" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_ValidateDeviceProperties">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:sequence minOccurs="0">
+						<xs:element name="reason">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="errorType">
+										<xs:sequence minOccurs="0">
+											<xs:element name="detail">
+												<xs:complexType>
+													<xs:sequence maxOccurs="unbounded">
+														<xs:element name="device">
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="invalid_attributes">
+																		<xs:annotation>
+																			<xs:documentation>all elements contain error text</xs:documentation>
+																		</xs:annotation>
+																		<xs:complexType>
+																			<xs:sequence>
+																				<xs:element name="name" type="xs:string" minOccurs="0"/>
+																				<xs:element name="ip_address" type="xs:string" minOccurs="0"/>
+																				<xs:element name="region_comp" type="xs:string" minOccurs="0"/>
+																			</xs:sequence>
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+																<xs:attribute name="id" type="xs:string" use="required"/>
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cmd_MultiplyDevice">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="cmdTypeSessionIdAndProject">
+					<xs:sequence>
+						<xs:element name="source_device">
+							<xs:complexType>
+								<xs:attribute name="id" type="xs:string" use="required"/>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="target_device">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="name" type="xs:string"/>
+									<xs:element name="ip_address" type="xs:string"/>
+									<xs:element name="region" type="xs:integer" minOccurs="0"/>
+									<xs:element name="component" type="xs:integer" minOccurs="0"/>
+									<xs:element name="description" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Rsp_MultiplyDevice">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="rspTypeStatus">
+					<xs:choice>
+						<xs:element name="payload">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="device">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="status" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>done or error</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="id" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="reason">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="errorType"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:choice>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!--********************************************************************-->
+	<!--*********************** ARCHIVE *********************************-->
+	<!--********************************************************************-->
+	<!--====== type definitions ======-->
+	<xs:complexType name="cmdTypeSessionId">
+		<xs:attribute name="session_id" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="cmdTypeSessionIdAndProject">
+		<xs:attribute name="session_id" type="xs:string" use="required"/>
+		<xs:attribute name="project_id" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="rspTypeStatus">
+		<xs:attribute name="status" type="xs:integer" use="required">
+			<xs:annotation>
+				<xs:documentation>negative values: NOK
+-4: command not complete
+-3: invalid session id
+-2: command not supported
+-1: unspecified error
+
+positive values: OK
+1: command succeeded</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="errorType">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="error_text">
+				<xs:annotation>
+					<xs:documentation>this error text is always shown at the same place (e.g. message log)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
